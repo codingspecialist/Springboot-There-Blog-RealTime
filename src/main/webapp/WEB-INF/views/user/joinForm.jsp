@@ -4,7 +4,7 @@
 
 <div class="container my-3">
     <div class="container">
-        <form onsubmit="return valid()">
+        <form action="/join" method="post" onsubmit="return valid()">
             <div class="d-flex form-group mb-2">
                 <input type="text" name="username" class="form-control" placeholder="Enter username"
                        id="username">
@@ -34,6 +34,7 @@
 <script>
     function valid() {
         alert("회원가입 유효성 검사");
+        return true;
     }
 </script>
 
