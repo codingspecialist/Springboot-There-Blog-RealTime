@@ -18,9 +18,6 @@ spring:
   h2:
     console:
       enabled: true
-  jackson:
-    serialization:
-      fail-on-empty-beans: false
   jpa:
     hibernate:
       ddl-auto: create
@@ -30,6 +27,9 @@ spring:
         format_sql: true
       default_batch_fetch_size: 100 # in query
     open-in-view: false
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
   output:
     ansi:
       enabled: always # vscode console color
