@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shop.mtcoding.thereblog.core.exception.csr.ExceptionApi400;
 import shop.mtcoding.thereblog.core.exception.ssr.Exception400;
+import shop.mtcoding.thereblog.core.util.MyParseUtil;
 import shop.mtcoding.thereblog.dto.board.BoardRequest;
 import shop.mtcoding.thereblog.model.board.Board;
 import shop.mtcoding.thereblog.model.board.BoardQueryRepository;
@@ -31,8 +32,11 @@ public class BoardService {
                     ()-> new RuntimeException("유저를 찾을 수 없습니다")
             );
 
-            // 2. 게시글 쓰기
-            boardRepository.save(saveInDTO.toEntity(userPS));
+            // 2. 섬네일 만들기
+            String thumbnail = MyParseUtil.getThumbnail(saveInDTO.getContent());
+
+            // 3. 게시글 쓰기
+            boardRepository.save(saveInDTO.toEntity(userPS, thumbnail));
         }catch (Exception e){
             throw new RuntimeException("글쓰기 실패 : "+e.getMessage());
         }
