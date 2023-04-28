@@ -7,12 +7,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import shop.mtcoding.thereblog.core.exception.csr.ExceptionApi400;
 import shop.mtcoding.thereblog.core.exception.ssr.Exception400;
 import shop.mtcoding.thereblog.core.exception.ssr.Exception500;
 import shop.mtcoding.thereblog.core.util.MyFileUtil;
 import shop.mtcoding.thereblog.dto.user.UserRequest;
 import shop.mtcoding.thereblog.model.user.User;
 import shop.mtcoding.thereblog.model.user.UserRepository;
+
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -27,13 +30,19 @@ public class UserService {
     // insert, update, delete -> try catch 처리
     @Transactional
     public void 회원가입(UserRequest.JoinInDTO joinInDTO) {
+        // 1. 유저네임 중복확인
+        Optional<User> userOP = userRepository.findByUsername(joinInDTO.getUsername());
+        if(userOP.isPresent()){
+            // 로그 (비정상적인 접근)
+            throw new Exception400("username", "유저네임이 중복되었어요");
+        }
         try {
-            // 1. 패스워드 암호화
+            // 2. 패스워드 암호화
             joinInDTO.setPassword(passwordEncoder.encode(joinInDTO.getPassword()));
-            // 2. DB 저장
+            // 3. DB 저장 (고립성)
             userRepository.save(joinInDTO.toEntity());
         }catch (Exception e){
-            throw new RuntimeException("회원가입 오류 : "+e.getMessage());
+            throw new Exception500("회원가입 실패 : "+e.getMessage());
         }
     } // 더티체킹, DB 세션 종료(OSIV=false)
 
@@ -56,4 +65,11 @@ public class UserService {
             throw new Exception500("프로필 사진 등록 실패 : "+e.getMessage());
         }
     } // 더티케이 (업데이트)
+
+    public void 유저네임중복체크(String username) {
+        Optional<User> userOP = userRepository.findByUsername(username);
+        if(userOP.isPresent()){
+            throw new ExceptionApi400("username", "유저네임이 중복되었어요");
+        }
+    }
 }
