@@ -4,13 +4,14 @@
 
 
 <div class="container my-3">
+    <c:if test="${sessionUser.id == board.user.id}">
         <div class="mb-3 d-flex">
-            <a href="/board/1/updateForm" class="btn btn-warning">수정</a>
-            <form>
-                <input type="hidden" name="id" />
+            <a href="/s/board/${board.id}/updateForm" class="btn btn-warning">수정</a>
+            <form action="/s/board/${board.id}/delete" method="post">
                 <button class="btn btn-danger">삭제</button>
             </form>
         </div>
+    </c:if>
 
 
     <div class="mb-2 d-flex justify-content-end">
