@@ -39,6 +39,19 @@ public class BoardQueryRepository {
         MyDTO myDTO = result.uniqueResult(query, MyDTO.class);
     }
 
+    public Page<Board> findAllByKeyword(int page, String keyword) {
+        int startPosition = page*SIZE;
+        List<Board> boardListPS = em.createQuery("select b from Board b join fetch b.user where b.title like :keyword order by b.id desc")
+                .setParameter("keyword", "%" + keyword + "%")
+                .setFirstResult(startPosition) // startPosition
+                .setMaxResults(SIZE) // size
+                .getResultList();
+        Long totalCount = em.createQuery("select count(b) from Board b where b.title like :keyword", Long.class)
+                .setParameter("keyword", "%" + keyword + "%")
+                .getSingleResult();
+        return new PageImpl<>(boardListPS, PageRequest.of(page, SIZE), totalCount);
+    }
+
     public static class MyDTO {
         private int id;
         private String title;

@@ -42,12 +42,19 @@ public class BoardService {
         }
     }
 
+    /*
+        isEmpty() 메소드는 문자열의 길이가 0인지 검사합니다.
+        isBlank() 메소드는 문자열이 비어있거나 공백 문자열(whitespace-only string)인지 검사합니다.
+    */
     @Transactional(readOnly = true) // 변경감지 하지마, 고립성(REPEATABLE READ)
-    public Page<Board> 글목록보기(int page) { // CSR은 DTO로 변경해서 돌려줘야 함.
-        // 1. 모든 전략은 Lazy : 이유는 필요할때만 가져오려고
-        // 2. 필요할때는 직접 fetch join을 사용해라
-        return boardQueryRepository.findAll(page);
-    }
+    public Page<Board> 글목록보기(int page, String keyword) { // CSR은 DTO로 변경해서 돌려줘야 함.
+        if(keyword.isBlank()){
+            return boardQueryRepository.findAll(page);
+        }else{
+            Page<Board> boardPGPS = boardQueryRepository.findAllByKeyword(page, keyword);
+            return boardPGPS;
+        }
+    } // openinview = false (리턴되고 나면 PS를 빼도됨)
 
     public Board 게시글상세보기(Long id) {
         Board boardPS = boardRepository.findByIdFetchUser(id).orElseThrow(
