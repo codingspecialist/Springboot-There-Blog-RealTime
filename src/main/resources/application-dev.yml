@@ -33,7 +33,14 @@ spring:
   output:
     ansi:
       enabled: always # vscode console color
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      enabled: true
 logging:
   level:
     '[shop.mtcoding.thereblog]': DEBUG
     '[org.hibernate.type]': TRACE
+
+file:
+  path: ./upload/

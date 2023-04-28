@@ -40,9 +40,9 @@
 
 <div class="container my-3">
     <h2 class="text-center">프로필 사진 변경 페이지</h2>
-    <form>
+    <form action="/s/user/${user.id}/updateProfile" method="post" enctype="multipart/form-data">
         <div class="form-group">
-            <img src="/images/dora.png" alt="Current Photo" class="img-fluid" id="imagePreview">
+            <img src="/upload/${user.profile}" alt="Current Photo" class="img-fluid" id="imagePreview">
         </div>
         <div class="form-group">
             <input type="file" class="form-control" id="profile" name="profile" onchange="chooseImage(this)">
@@ -56,12 +56,14 @@
         //console.log(obj);
         //console.log(obj.files);
         let f  = obj.files[0];
-        if(!f.type.match("image.*")){
+        if(!f.type.match("image.*")){ // mime 타입 image/png, image/jpeg
             alert("이미지를 등록해야 합니다.");
             return;
         }
         let reader = new FileReader();
-        reader.readAsDataURL(f);
+
+        reader.readAsDataURL(f); // I/O 발생 - 느려요.
+
         // 콜스택이 다 비워지고, 이벤트 루프로 가서 readAsDataURL 이벤트가 끝나면 콜백시켜주는 함수
         reader.onload = function (e){
             console.log(e);
